@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avlokan — Two Platforms. One Ecosystem.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── DESIGN TOKENS ─────────────────────────────────────────── */
+:root {
+  --bg:        #FFFFFF;
+  --bg2:       #FAFAFA;
+  --text:      #0A0A0A;
+  --sub:       #555555;
+  --muted:     #999999;
+  --border:    1.5px solid #000;
+  --border-t:  #000000;
+  --teal:      #0F6E56;
+  --teal-lt:   #E1F5EE;
+  --teal-dk:   #085041;
+  --crit-bg:   #A32D2D;
+  --crit-txt:  #FCEBEB;
+  --warn-bg:   #854F0B;
+  --warn-txt:  #FAEEDA;
+  --fh: 'Barlow Condensed', sans-serif;
+  --fm: 'IBM Plex Mono', monospace;
+  --fb: 'IBM Plex Sans', sans-serif;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--fb); background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+/* ── UTILS ─────────────────────────────────────────────────── */
+.mono { font-family: var(--fm); }
+.label {
+  font-family: var(--fm); font-size: 0.625rem; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+}
+.tag {
+  display: inline-block; font-family: var(--fm); font-size: 0.6rem;
+  font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.2rem 0.5rem; line-height: 1.6; border-radius: 2px;
+}
+.tag-strength { background: #085041; color: #E1F5EE; }
+.tag-strategy { background: #854F0B; color: #FAEEDA; }
+.tag-critical  { background: #A32D2D; color: #FCEBEB; }
+.tag-cat       { background: var(--teal-lt); color: var(--teal-dk); border: 1px solid var(--teal); }
+.tag-plain     { background: #F0F0F0; color: #555; border: 1px solid #CCC; }
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.65rem 1.4rem; font-family: var(--fm); font-size: 0.7rem;
+  font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer; transition: background 0.1s, color 0.1s;
+  text-decoration: none; border-radius: 0;
+}
+.btn-fill { background: #000; color: #fff; border: 1.5px solid #000; }
+.btn-fill:hover { background: var(--teal); border-color: var(--teal); }
+.btn-out  { background: #fff; color: #000; border: 1.5px solid #000; }
+.btn-out:hover  { background: #000; color: #fff; }
+
+/* ── NAV ───────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  background: #fff; border-bottom: 1.5px solid #000;
+}
+.nav-in {
+  max-width: 1200px; margin: 0 auto; padding: 0 2.5rem;
+  height: 56px; display: flex; align-items: center; justify-content: space-between;
+}
+.logo {
+  font-family: var(--fh); font-size: 1.5rem; font-weight: 900;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--text); text-decoration: none;
+}
+.logo em { font-style: normal; color: var(--teal); }
+.nav-links { display: flex; align-items: stretch; list-style: none; height: 56px; }
+.nav-links li { border-left: 1.5px solid #000; }
+.nav-links a {
+  display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+  padding: 0 1.25rem; height: 100%;
+  font-family: var(--fh); font-size: 0.95rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: #000; text-decoration: none;
+  transition: background 0.12s, color 0.12s;
+}
+.nav-links a:hover { background: #000; color: #fff; }
+.nav-links a .nav-num { font-family: var(--fm); font-size: 0.52rem; color: var(--muted); line-height: 1; transition: color 0.12s; margin-top: 2px; }
+.nav-links a:hover .nav-num { color: rgba(255,255,255,0.4); }
+.nav-cta {
+  font-family: var(--fh); font-size: 0.95rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0 1.4rem; height: 56px;
+  background: #000; color: #fff; border: none; border-left: 1.5px solid #000;
+  cursor: pointer; transition: background 0.1s;
+}
+.nav-cta:hover { background: var(--teal); }
+
+/* ── HERO ──────────────────────────────────────────────────── */
+.hero {
+  min-height: 100vh; border-bottom: 1.5px solid #000;
+  display: grid; grid-template-columns: 1fr 340px; align-items: stretch;
+  max-width: 1200px; margin: 0 auto;
+  padding: 0; margin-top: 56px;
+}
+.hero-left {
+  padding: 3rem 2.5rem 3rem 2.5rem;
+  border-right: 1.5px solid #000;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.hero-eyebrow {
+  font-family: var(--fm); font-size: 0.62rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 1.25rem;
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.hero-eyebrow::before { content: ''; width: 20px; height: 1.5px; background: var(--teal); flex-shrink: 0; }
+.hero h1 {
+  font-family: var(--fh); font-size: clamp(4.5rem, 7vw, 7rem);
+  font-weight: 900; line-height: 0.93; letter-spacing: -0.01em;
+  text-transform: uppercase; color: #000; margin-bottom: 1.25rem;
+}
+.hero h1 .teal { color: var(--teal); }
+.hero-sub {
+  font-size: 0.92rem; color: var(--sub); line-height: 1.65;
+  max-width: 440px; margin-bottom: 1.5rem; font-weight: 300;
+}
+.hero-ctas { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+/* Hero right panel */
+.hero-panel { display: flex; flex-direction: column; }
+.hero-panel-hd {
+  padding: 0.75rem 1.25rem; border-bottom: 1.5px solid #000;
+  font-family: var(--fm); font-size: 0.58rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted);
+  background: var(--bg2);
+  padding-top: calc(0.75rem + 50px);
+}
+.hero-stat {
+  padding: 1.1rem 1.25rem; border-bottom: 1.5px solid #000;
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+}
+.hero-stat:last-child { border-bottom: none; }
+.hero-stat-n {
+  font-family: var(--fh); font-size: 4rem; font-weight: 900;
+  line-height: 1; color: #000; letter-spacing: -0.02em;
+}
+.hero-stat-n .acc { color: var(--teal); }
+.hero-stat-l {
+  font-family: var(--fm); font-size: 0.6rem; letter-spacing: 0.07em;
+  color: var(--sub); text-transform: uppercase; margin-top: 0.4rem; line-height: 1.5;
+}
+
+/* ── SHARED SECTION STRUCTURE ──────────────────────────────── */
+.sec-strip {
+  border-bottom: 1.5px solid #000;
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 60px 1fr auto;
+  align-items: stretch; min-height: 48px;
+}
+.sec-strip-idx {
+  font-family: var(--fm); font-size: 0.6rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted);
+  border-right: 1.5px solid #000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 0.75rem; background: var(--bg2);
+}
+.sec-strip-name {
+  font-family: var(--fm); font-size: 0.72rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.12em; color: var(--text);
+  display: flex; align-items: center; padding: 0 1.5rem;
+}
+.sec-strip-name.accent { color: var(--teal); }
+.sec-strip-desc {
+  font-family: var(--fm); font-size: 0.6rem; color: var(--sub);
+  border-left: 1.5px solid #000; padding: 0 1.5rem;
+  display: flex; align-items: center; letter-spacing: 0.04em;
+}
+.sec-body { padding: 2.5rem 2.5rem; max-width: 1200px; margin: 0 auto; }
+.sec-border { border-bottom: 1.5px solid #000; }
+.sec-title {
+  font-family: var(--fh); font-size: clamp(2.5rem, 4vw, 4.5rem);
+  font-weight: 900; text-transform: uppercase; line-height: 0.93;
+  letter-spacing: -0.01em; margin-bottom: 1.75rem;
+}
+.sec-title em { font-style: italic; color: var(--teal); display: block; }
+
+/* ── FEATURE TABLE ─────────────────────────────────────────── */
+.feat-table { width: 100%; border-collapse: collapse; border: 1.5px solid #000; }
+.feat-table tr { border-bottom: 1.5px solid #000; }
+.feat-table tr:last-child { border-bottom: none; }
+.feat-table td { padding: 0.75rem 0.75rem; vertical-align: top; }
+.feat-num { font-family: var(--fm); font-size: 0.58rem; color: var(--muted); padding-right: 0.75rem; white-space: nowrap; padding-top: 0.2rem; }
+.feat-name { font-family: var(--fb); font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem; }
+.feat-desc { font-size: 0.8rem; color: var(--sub); line-height: 1.65; font-weight: 300; }
+
+/* ── TWO-COL LAYOUT ────────────────────────────────────────── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start; }
+.two-col.flip { }
+
+/* ── MOCK PANELS ───────────────────────────────────────────── */
+.mock { border: 1.5px solid #000; background: #fff; }
+.mock-bar {
+  padding: 0.65rem 1rem; border-bottom: 1.5px solid #000;
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg2);
+}
+.mock-bar-lbl { font-family: var(--fm); font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sub); }
+.mock-bar-st  { font-family: var(--fm); font-size: 0.58rem; font-weight: 600; }
+.mock-bar-st.live { color: var(--teal); }
+.mock-filter-row { display: flex; border-bottom: 1.5px solid #000; }
+.mock-filter {
+  flex: 1; padding: 0.55rem 0.5rem; font-family: var(--fm); font-size: 0.58rem;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--sub);
+  border-right: 1px solid #000; text-align: center; cursor: pointer;
+  transition: all 0.1s; background: #fff;
+}
+.mock-filter.active { color: #fff; background: #000; }
+.mock-filter:last-child { border-right: none; }
+.exam-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.85rem 1rem; border-bottom: 1px solid #E0E0E0;
+}
+.exam-row:last-of-type { border-bottom: none; }
+.exam-nm { font-family: var(--fb); font-size: 0.8rem; font-weight: 600; }
+.exam-mt { font-family: var(--fm); font-size: 0.58rem; color: var(--sub); margin-top: 0.18rem; }
+.exam-go {
+  font-family: var(--fm); font-size: 0.58rem; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 0.28rem 0.65rem;
+  border: 1.5px solid #000; background: #fff; cursor: pointer; transition: all 0.1s;
+}
+.exam-go:hover { background: #000; color: #fff; }
+.live-bar {
+  padding: 0.75rem 1rem; background: var(--teal-lt);
+  border-top: 1.5px solid var(--teal);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.live-lbl { font-family: var(--fm); font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal-dk); }
+.live-time { font-family: var(--fm); font-size: 0.7rem; font-weight: 600; color: var(--teal); }
+.dash-row { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1.5px solid #000; }
+.dash-kpi { padding: 1rem; border-right: 1.5px solid #000; }
+.dash-kpi:last-child { border-right: none; }
+.kpi-n { font-family: var(--fh); font-size: 2.2rem; font-weight: 900; line-height: 1; letter-spacing: -0.02em; }
+.kpi-n .acc { color: var(--teal); }
+.kpi-l { font-family: var(--fm); font-size: 0.58rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--sub); margin-top: 0.35rem; }
+.risk-head {
+  padding: 0.6rem 1rem; border-bottom: 1.5px solid #000;
+  font-family: var(--fm); font-size: 0.58rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--sub); background: var(--bg2);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.risk-flag { color: var(--crit-bg); font-weight: 600; }
+.risk-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.75rem 1rem; border-bottom: 1px solid #E8E8E8;
+}
+.risk-item:last-child { border-bottom: none; }
+.risk-nm { font-size: 0.82rem; font-weight: 600; }
+.risk-id { font-family: var(--fm); font-size: 0.58rem; color: var(--muted); margin-top: 0.12rem; }
+.risk-sc { font-family: var(--fm); font-size: 0.7rem; color: var(--crit-bg); font-weight: 600; text-align: right; }
+.risk-sc small { display: block; font-size: 0.56rem; color: var(--sub); font-weight: 400; }
+
+/* ── FLOW STEPS ────────────────────────────────────────────── */
+.flow-steps { display: grid; grid-template-columns: repeat(3,1fr); border: 1.5px solid #000; }
+.flow-step { padding: 1.5rem; border-right: 1.5px solid #000; }
+.flow-step:last-child { border-right: none; }
+.flow-n { font-family: var(--fh); font-size: 3.5rem; font-weight: 900; line-height: 0.9; color: #E8E8E8; margin-bottom: 1rem; }
+.flow-step-title { font-family: var(--fh); font-size: 1.1rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.7rem; }
+.flow-step p { font-size: 0.82rem; color: var(--sub); line-height: 1.65; font-weight: 300; }
+.flow-bridge {
+  margin-top: 1.5rem; border: 1.5px solid #000;
+  display: grid; grid-template-columns: repeat(4,1fr);
+}
+.fb-item { padding: 1rem; border-right: 1.5px solid #000; }
+.fb-item:last-child { border-right: none; }
+.fb-n { font-family: var(--fm); font-size: 0.58rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
+.fb-t { font-size: 0.82rem; color: #000; font-weight: 500; line-height: 1.4; }
+
+/* ── COMPARISON TABLE ──────────────────────────────────────── */
+table.comp { width: 100%; border-collapse: collapse; border: 1.5px solid #000; }
+table.comp th, table.comp td { padding: 0.85rem 1rem; border: 1px solid #E0E0E0; font-size: 0.84rem; }
+table.comp thead { background: var(--bg2); }
+table.comp th {
+  font-family: var(--fm); font-size: 0.62rem; letter-spacing: 0.09em;
+  text-transform: uppercase; font-weight: 600; text-align: left; color: var(--sub);
+  border-color: #000;
+}
+table.comp th:last-child { color: var(--teal); }
+table.comp thead tr { border-bottom: 1.5px solid #000; }
+table.comp td:not(:first-child) { text-align: center; }
+table.comp td:first-child { color: var(--sub); font-size: 0.82rem; }
+table.comp tbody tr:hover td { background: #FAFAFA; }
+.cy { color: var(--teal-dk); font-family: var(--fm); font-size: 0.78rem; font-weight: 600; }
+.cn { color: #CCC; font-family: var(--fm); font-size: 0.78rem; }
+.cp { color: var(--warn-bg); font-family: var(--fm); font-size: 0.78rem; }
+
+/* ── WHO IT'S FOR ──────────────────────────────────────────── */
+.who-grid { display: grid; grid-template-columns: repeat(3,1fr); border: 1.5px solid #000; }
+.who-card { padding: 1.5rem; border-right: 1.5px solid #000; }
+.who-card:last-child { border-right: none; }
+.who-num { font-family: var(--fm); font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
+.who-sz { font-family: var(--fh); font-size: 2.2rem; font-weight: 900; text-transform: uppercase; line-height: 0.95; color: var(--teal); margin-bottom: 0.4rem; }
+.who-nm { font-family: var(--fh); font-size: 1.25rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.85rem; }
+.who-dc { font-size: 0.82rem; color: var(--sub); line-height: 1.65; font-weight: 300; }
+.who-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 1.1rem; }
+
+/* ── CTA ───────────────────────────────────────────────────── */
+.cta-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.cta-left { padding: 2.5rem 2.5rem 2.5rem 2.5rem; border-right: 1.5px solid #000; }
+.cta-right { padding: 2.5rem 2.5rem; }
+.cta-form { display: flex; flex-direction: column; }
+.cta-form-lbl { font-family: var(--fm); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.5rem; }
+.cta-field {
+  display: block; width: 100%;
+  border: none; border-bottom: 1.5px solid #000;
+  background: transparent; color: var(--text);
+  font-family: var(--fb); font-size: 0.9rem; padding: 0.9rem 0;
+  outline: none; transition: border-color 0.12s;
+}
+.cta-field:focus { border-bottom-color: var(--teal); }
+.cta-field::placeholder { color: #C8C8C8; }
+.cta-submit {
+  margin-top: 1.75rem; width: 100%; padding: 0.9rem;
+  font-family: var(--fm); font-size: 0.7rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  background: #000; color: #fff; border: 1.5px solid #000; cursor: pointer;
+  transition: background 0.1s;
+}
+.cta-submit:hover { background: var(--teal); border-color: var(--teal); }
+.cta-urls { display: flex; flex-direction: column; margin-top: 2rem; }
+.cta-url {
+  display: flex; align-items: baseline; gap: 1.25rem;
+  padding: 0.85rem 0; border-top: 1.5px solid #000;
+}
+.cta-url:last-child { border-bottom: 1.5px solid #000; }
+.cta-url-lbl { font-family: var(--fm); font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); min-width: 65px; }
+.cta-url-val { font-family: var(--fm); font-size: 0.78rem; color: var(--teal); }
+
+/* ── FOOTER ────────────────────────────────────────────────── */
+footer { border-top: 1.5px solid #000; }
+.foot-inner {
+  max-width: 1200px; margin: 0 auto; padding: 1.5rem 2.5rem;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+}
+.foot-logo { font-family: var(--fh); font-size: 1.1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; }
+.foot-logo em { font-style: normal; color: var(--teal); }
+.foot-sub { font-family: var(--fm); font-size: 0.58rem; color: var(--muted); letter-spacing: 0.05em; margin-top: 0.2rem; }
+.foot-links { display: flex; gap: 0; }
+.foot-links a {
+  font-family: var(--fm); font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--sub); text-decoration: none; padding: 0 1rem;
+  border-left: 1.5px solid #000; transition: color 0.1s;
+}
+.foot-links a:hover { color: #000; }
+.foot-copy { font-family: var(--fm); font-size: 0.58rem; color: var(--muted); }
+
+/* ── MODAL ─────────────────────────────────────────────────── */
+.overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,0.6);
+  display: flex; align-items: center; justify-content: center; padding: 1rem;
+  opacity: 0; pointer-events: none; transition: opacity 0.18s;
+}
+.overlay.open { opacity: 1; pointer-events: auto; }
+.mbox {
+  background: #fff; border: 1.5px solid #000;
+  width: min(460px, 100%); position: relative;
+  transform: translateY(10px); transition: transform 0.18s;
+}
+.overlay.open .mbox { transform: translateY(0); }
+.mhead {
+  padding: 1rem 1.5rem; border-bottom: 1.5px solid #000;
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg2);
+}
+.mhead-logo { font-family: var(--fh); font-size: 1.1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; }
+.mhead-logo em { font-style: normal; color: var(--teal); }
+.mhead-label { font-family: var(--fm); font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.mclose { background: none; border: none; color: var(--sub); font-size: 1.2rem; cursor: pointer; padding: 0.25rem; transition: color 0.1s; }
+.mclose:hover { color: #000; }
+.mbody { padding: 2rem 1.5rem; }
+.mlabel { font-family: var(--fm); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.5rem; }
+.minp {
+  display: block; width: 100%; border: none; border-bottom: 1.5px solid #000;
+  background: transparent; color: var(--text);
+  font-family: var(--fb); font-size: 0.9rem; padding: 0.9rem 0;
+  outline: none; margin-bottom: 0.25rem; transition: border-color 0.12s;
+}
+.minp:focus { border-bottom-color: var(--teal); }
+.minp::placeholder { color: #C8C8C8; }
+.mbtn {
+  width: 100%; margin-top: 1.5rem; padding: 0.85rem;
+  font-family: var(--fm); font-size: 0.7rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  background: #000; color: #fff; border: 1.5px solid #000; cursor: pointer;
+  transition: background 0.1s;
+}
+.mbtn:hover { background: var(--teal); border-color: var(--teal); }
+.mfooter { margin-top: 1rem; font-family: var(--fm); font-size: 0.62rem; color: var(--sub); text-align: center; }
+.mfooter a { color: var(--teal); text-decoration: none; }
+.portal { display: none; }
+.portal.on { display: block; }
+.login-view.off { display: none; }
+.pcard {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.1rem 1.25rem; border: 1.5px solid #000;
+  text-decoration: none; color: var(--text); margin-bottom: 0.5rem;
+  transition: border-color 0.12s, background 0.12s;
+}
+.pcard:hover { background: var(--teal-lt); border-color: var(--teal); }
+.pcard-n { font-family: var(--fh); font-size: 1.2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.03em; }
+.pcard-n.teal { color: var(--teal); }
+.pcard-d { font-family: var(--fm); font-size: 0.58rem; color: var(--sub); margin-top: 0.2rem; }
+.pcard-arr { font-family: var(--fm); font-size: 1rem; color: var(--sub); }
+
+/* ── SCROLL REVEAL ─────────────────────────────────────────── */
+.rv { opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; }
+.rv.go { opacity: 1; transform: translateY(0); }
+.rv2 { transition-delay: 0.07s; }
+.rv3 { transition-delay: 0.14s; }
+@media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-in">
+    <a href="#" class="logo">Avlo<em>kan</em></a>
+    <ul class="nav-links">
+      <li><a href="#platforms">Platforms</a></li>
+      <li><a href="#flow">Data Bridge</a></li>
+      <li><a href="#compare">Compare</a></li>
+      <li><a href="#contact">Demo</a></li>
+    </ul>
+
+  </div>
+</nav>
+
+<!-- HERO -->
+<div style="border-bottom: 1.5px solid #000;">
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Pariksha × Sameeksha &nbsp;·&nbsp; Indian Edtech Analytics</div>
+      <h1>Two<br>Platforms.<br>One<br>Ecosystem.<br><span class="teal">Zero<br>Guesswork.</span></h1>
+      <p class="hero-sub">Real NTA questions for students. Real-time intelligence for institutes. The complete analytics stack for India's competitive exam coaching sector.</p>
+      <div class="hero-ctas">
+        <a href="#contact" class="btn btn-fill">Request Demo</a>
+      </div>
+    </div>
+    <div class="hero-panel">
+      <div class="hero-stat">
+        <div class="hero-stat-n">5K<span class="acc">+</span></div>
+        <div class="hero-stat-l">NTA questions<br>loaded &amp; verified</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-n">3</div>
+        <div class="hero-stat-l">Exam streams<br>JEE Mains · Adv · NEET</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-n">0</div>
+        <div class="hero-stat-l">Manual steps to see<br>student analytics</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PLATFORM 01: PARIKSHA -->
+<div class="sec-border" id="platforms">
+  <div class="sec-strip">
+    <span class="sec-strip-idx">01</span>
+    <span class="sec-strip-name accent">Pariksha</span>
+    <span class="sec-strip-desc">Mock Tests Built for Real Score Improvement</span>
+  </div>
+  <div class="sec-body rv">
+    <h2 class="sec-title">Where Students Practice Like The <em>Real Exam.</em></h2>
+    <div class="two-col">
+      <div>
+        <table class="feat-table">
+          <tbody>
+            <tr><td class="feat-num">01</td><td><div class="feat-name">5,000+ Real NTA Questions</div><div class="feat-desc">Verbatim JEE Mains, Advanced &amp; NEET UG PYQs. Every question loaded and verified — not custom-made substitutes.</div></td></tr>
+            <tr><td class="feat-num">02</td><td><div class="feat-name">Three Test Formats</div><div class="feat-desc">Mock, Subject and Topic tests. Full NTA marking rules enforced: +4/−1 MCQ, +4/0 Numerical, multi-option for JEE Advanced.</div></td></tr>
+            <tr><td class="feat-num">03</td><td><div class="feat-name">Full Per-Question Review</div><div class="feat-desc">After submission: your answer vs correct for all questions. Retest any paper to track score improvement over time.</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mock rv rv2">
+        <div class="mock-bar">
+          <span class="mock-bar-lbl">Pariksha · Exam Library</span>
+          <span class="mock-bar-st live">● Live</span>
+        </div>
+        <div class="mock-filter-row">
+          <div class="mock-filter active">All</div>
+          <div class="mock-filter">JEE Mains</div>
+          <div class="mock-filter">JEE Adv</div>
+          <div class="mock-filter">NEET UG</div>
+        </div>
+        <div class="exam-row"><div><div class="exam-nm">JEE Advanced 2023 · Paper 1</div><div class="exam-mt">51 Qs · 180 marks · 180 min</div></div><div class="exam-go">Start →</div></div>
+        <div class="exam-row"><div><div class="exam-nm">JEE Mains 2024 · Feb 1 · S1</div><div class="exam-mt">90 Qs · 360 marks · 180 min</div></div><div class="exam-go">Start →</div></div>
+        <div class="exam-row"><div><div class="exam-nm">NEET UG 2024 · UG R1</div><div class="exam-mt">200 Qs · 720 marks · 200 min</div></div><div class="exam-go">Start →</div></div>
+        <div class="exam-row" style="opacity:0.35;"><div><div class="exam-nm">JEE Mains 2024 · Jan 27 · S1</div><div class="exam-mt">90 Qs · 360 marks · 180 min</div></div><div class="exam-go">Start →</div></div>
+        <div class="live-bar"><span class="live-lbl">⚡ Session in progress</span><span class="live-time">2:47:12</span></div>
+      </div>
+    </div>
+  </div>
+<div class="sec-border" id="sameeksha">
+  <div class="sec-strip">
+    <span class="sec-strip-idx">02</span>
+    <span class="sec-strip-name">Sameeksha</span>
+    <span class="sec-strip-desc">Performance Intelligence Dashboard</span>
+  </div>
+  <div class="sec-body rv">
+    <h2 class="sec-title">Insights For Teachers On What To <em>Teach Next.</em></h2>
+    <div class="two-col" style="direction:rtl;">
+      <div style="direction:ltr;">
+        <table class="feat-table">
+          <tbody>
+            <tr><td class="feat-num">01</td><td><div class="feat-name">Institute-Wide Cohort Dashboard</div><div class="feat-desc">Batch averages, test coverage, accuracy trends — every student visible at once, no spreadsheet required.</div></td></tr>
+            <tr><td class="feat-num">02</td><td><div class="feat-name">Deep Student Profiles</div><div class="feat-desc">Strengths, weaknesses, topic accuracy and recommended focus areas — auto-generated per student, per subject.</div></td></tr>
+            <tr><td class="feat-num">03</td><td><div class="feat-name">Auto At-Risk Intervention List</div><div class="feat-desc">Students who need help are ranked and surfaced automatically. No manual sorting. No gut instinct required.</div></td></tr>
+            <tr><td class="feat-num">04</td><td><div class="feat-name">Real-Time Data from Pariksha</div><div class="feat-desc">The moment a student submits on Pariksha, Sameeksha updates. Zero manual data entry. Zero delay.</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mock rv rv2" style="direction:ltr;">
+        <div class="mock-bar">
+          <span class="mock-bar-lbl">Sameeksha · Dashboard</span>
+          <span class="mock-bar-st" style="color:var(--sub);">● Synced</span>
+        </div>
+        <div class="dash-row">
+          <div class="dash-kpi"><div class="kpi-n"><span class="acc">124</span><span style="font-size:1.1rem;color:var(--sub)">/300</span></div><div class="kpi-l">5-Test Avg · JEE Full</div></div>
+          <div class="dash-kpi"><div class="kpi-n">46.2<span style="font-size:1.1rem;color:var(--sub)">%</span></div><div class="kpi-l">Avg Accuracy · Last Mock</div></div>
+        </div>
+        <div class="dash-row">
+          <div class="dash-kpi"><div class="kpi-n">16</div><div class="kpi-l">Students / Test (avg)</div></div>
+          <div class="dash-kpi"><div class="kpi-n"><span class="acc">+1</span></div><div class="kpi-l">vs Previous Test</div></div>
+        </div>
+        <div class="risk-head">Students Who Need Help <span class="risk-flag">⚠ 5 flagged</span></div>
+        <div class="risk-item"><div><div class="risk-nm">Vidhi Barman</div><div class="risk-id">STUJ0071</div></div><div class="risk-sc">52/300<small>−72 marks</small></div></div>
+        <div class="risk-item"><div><div class="risk-nm">Anika Luthra</div><div class="risk-id">STUJ0045</div></div><div class="risk-sc">83/300<small>−40 marks</small></div></div>
+        <div class="risk-item"><div><div class="risk-nm">Siddharth Barad</div><div class="risk-id">STUJ0052</div></div><div class="risk-sc">103/300<small>−21 marks</small></div></div>
+        <div class="risk-item" style="opacity:0.4;"><div><div class="risk-nm">Mason Ramesh</div><div class="risk-id">STUJ0055</div></div><div class="risk-sc">104/300<small>−20 marks</small></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="sec-border" id="flow">
+  <div class="sec-strip">
+    <span class="sec-strip-idx">03</span>
+    <span class="sec-strip-name">The Data Bridge</span>
+    <span class="sec-strip-desc">How Pariksha feeds Sameeksha in real time</span>
+  </div>
+  <div class="sec-body rv">
+    <h2 class="sec-title">Students Test. Data Flows. <em>Institutes Know.</em></h2>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="flow-n">01</div><div class="flow-step-title">Student Takes Test on Pariksha</div><p>Real NTA papers, full exam rules, auto-saved. Starts in under 2 minutes. No setup needed from the institute.</p></div>
+      <div class="flow-step"><div class="flow-n" style="color:var(--teal);">02</div><div class="flow-step-title">Backend Scores &amp; Organises</div><p>Every response scored instantly. Grouped by subject, topic and question type automatically. No human in the loop.</p></div>
+      <div class="flow-step"><div class="flow-n">03</div><div class="flow-step-title">Institute Sees Intelligence on Sameeksha</div><p>Cohort dashboard, student profiles, at-risk list — all updated in real time. Zero steps for the teacher.</p></div>
+    </div>
+    <div class="flow-bridge">
+      <div class="fb-item"><div class="fb-n">Step 01</div><div class="fb-t">Student submits session on Pariksha</div></div>
+      <div class="fb-item"><div class="fb-n">Step 02</div><div class="fb-t">Backend scores every response by topic</div></div>
+      <div class="fb-item"><div class="fb-n">Step 03</div><div class="fb-t">Results auto-organised by subject</div></div>
+      <div class="fb-item"><div class="fb-n">Step 04</div><div class="fb-t">Sameeksha shows insights immediately</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARISON -->
+<div class="sec-border" id="compare">
+  <div class="sec-strip">
+    <span class="sec-strip-idx">04</span>
+    <span class="sec-strip-name">Why Not Paper?</span>
+    <span class="sec-strip-desc">Competitive comparison</span>
+  </div>
+  <div class="sec-body rv">
+    <h2 class="sec-title">From Paper Tests to <em>Real Intelligence.</em></h2>
+    <table class="comp">
+      <thead>
+        <tr>
+          <th style="width:34%">Feature</th>
+          <th>Paper Mock Tests</th>
+          <th>Generic Test Apps</th>
+          <th>Pariksha + Sameeksha</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Real NTA questions (verbatim)</td><td class="cn">✗ None</td><td class="cp">⚠ Some</td><td class="cy">✓ All papers, exact</td></tr>
+        <tr><td>Timed exam simulation</td><td class="cp">⚠ In-person only</td><td class="cp">⚠ Basic timer</td><td class="cy">✓ Full NTA rules</td></tr>
+        <tr><td>Auto-save on answer change</td><td class="cn">✗ None</td><td class="cn">✗ Manual save</td><td class="cy">✓ 400ms instant</td></tr>
+        <tr><td>Per-question review post-submit</td><td class="cn">✗ Manual grading</td><td class="cp">⚠ Score only</td><td class="cy">✓ Full Q+A review</td></tr>
+        <tr><td>Topic-level accuracy tracking</td><td class="cn">✗ None</td><td class="cn">✗ None</td><td class="cy">✓ Every topic, every student</td></tr>
+        <tr><td>Auto at-risk student detection</td><td class="cn">✗ Teacher intuition</td><td class="cn">✗ None</td><td class="cy">✓ Auto-generated</td></tr>
+        <tr><td>Zero manual data entry</td><td class="cn">✗ Hours of work</td><td class="cp">⚠ Partial</td><td class="cy">✓ Fully automated</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- WHO IT'S FOR -->
+<div class="sec-border">
+  <div class="sec-strip">
+    <span class="sec-strip-idx">05</span>
+    <span class="sec-strip-name">Use Cases</span>
+    <span class="sec-strip-desc">Who Avlokan is built for</span>
+  </div>
+  <div class="sec-body rv">
+    <h2 class="sec-title">Built for India's Coaching Ecosystem.</h2>
+    <div class="who-grid">
+      <div class="who-card">
+        <div class="who-num">Use Case — 01</div>
+        <div class="who-sz">20–60</div>
+        <div class="who-nm">Small Batch Institutes</div>
+        <div class="who-dc">Local coaching centres running JEE or NEET batches. Currently tracking on paper or Excel. Get structured data from Day 1, no data analyst needed.</div>
+        <div class="who-tags"><span class="tag tag-cat">JEE</span><span class="tag tag-cat">NEET</span></div>
+      </div>
+      <div class="who-card">
+        <div class="who-num">Use Case — 02</div>
+        <div class="who-sz">60–500</div>
+        <div class="who-nm">Mid-Size Coaching Chains</div>
+        <div class="who-dc">Regional institutes with multiple batches. One dashboard showing the bottom 10 students in every batch and the topics dragging each one down.</div>
+        <div class="who-tags"><span class="tag tag-plain">Multi-batch</span><span class="tag tag-plain">Branches</span></div>
+      </div>
+      <div class="who-card">
+        <div class="who-num">Use Case — 03</div>
+        <div class="who-sz">10–30</div>
+        <div class="who-nm">Individual Star Tutors</div>
+        <div class="who-dc">Private tutors who want to offer more than a WhatsApp group. Show parents a real performance dashboard and differentiate your offering instantly.</div>
+        <div class="who-tags"><span class="tag tag-plain">Boutique</span><span class="tag tag-plain">Parent-facing</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="sec-border" id="contact">
+  <div class="sec-strip">
+    <span class="sec-strip-idx">06</span>
+    <span class="sec-strip-name">Get Started</span>
+    <span class="sec-strip-desc">Request a demo</span>
+  </div>
+  <div class="cta-body rv">
+    <div class="cta-left">
+      <h2 class="sec-title">Ready To See<br>Your Institute's<br><em>Data?</em></h2>
+      <p style="font-size:0.88rem;color:var(--sub);line-height:1.75;font-weight:300;max-width:380px;">Give your students Pariksha today. See your batch's intelligence on Sameeksha.</p>
+
+    </div>
+    <div class="cta-right">
+      <div class="cta-form-lbl">// Request a demo</div>
+      <form class="cta-form" onsubmit="handleDemo(event)">
+        <input class="cta-field" type="text" placeholder="Institute name" required>
+        <input class="cta-field" type="email" placeholder="Email address" required>
+        <input class="cta-field" type="text" placeholder="City / State">
+        <input class="cta-field" type="tel" placeholder="Mobile number">
+        <button type="submit" class="cta-submit" id="demoBtn">Submit Request →</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-inner">
+    <div>
+      <div class="foot-logo">Avlo<em>kan</em></div>
+      <div class="foot-sub">अवलोकन · Observation. Clarity. Intelligence.</div>
+    </div>
+    <div class="foot-links">
+      <a href="#platforms">Platforms</a>
+      <a href="#flow">Data Bridge</a>
+      <a href="#compare">Compare</a>
+      <a href="#contact">Demo</a>
+    </div>
+    <div class="foot-copy">© 2026 Avlokan</div>
+  </div>
+</footer>
+
+<!-- LOGIN MODAL -->
+<div class="overlay" id="modal">
+  <div class="mbox">
+    <div class="mhead">
+      <div>
+        <div class="mhead-logo">Avlo<em>kan</em></div>
+        <div class="mhead-label">Institute Portal</div>
+      </div>
+      <button class="mclose" onclick="closeModal()">✕</button>
+    </div>
+    <div class="login-view mbody" id="loginView">
+      <div class="mlabel">// Sign in to continue</div>
+      <input class="minp" type="email" id="mEmail" placeholder="Institute email address">
+      <input class="minp" type="password" id="mPass" placeholder="Password">
+      <button class="mbtn" onclick="doLogin()">Sign In →</button>
+      <div class="mfooter">No account? <a href="#contact" onclick="closeModal()">Request access →</a></div>
+    </div>
+    <div class="portal mbody" id="portalView">
+      <div class="mlabel">// Select platform</div>
+      <a class="pcard" href="https://ta-test-frontend.pages.dev" target="_blank" rel="noopener">
+        <div><div class="pcard-n teal">Pariksha</div><div class="pcard-d">Student test-taking · Share URL with your batch</div></div>
+        <div class="pcard-arr">→</div>
+      </a>
+      <a class="pcard" href="https://ta-mvp-frontend.pages.dev" target="_blank" rel="noopener">
+        <div><div class="pcard-n">Sameeksha</div><div class="pcard-d">Institute analytics · Your cohort intelligence</div></div>
+        <div class="pcard-arr">→</div>
+      </a>
+      <div class="mfooter" style="margin-top:1rem;"><a href="#" onclick="showLogin();return false;">← Different account</a></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openModal()  { document.getElementById('modal').classList.add('open'); }
+  function closeModal() { document.getElementById('modal').classList.remove('open'); }
+  document.getElementById('modal').addEventListener('click', e => { if (e.target === document.getElementById('modal')) closeModal(); });
+  function doLogin() {
+    const email = document.getElementById('mEmail').value.trim();
+    if (!email) { document.getElementById('mEmail').focus(); return; }
+    document.getElementById('loginView').classList.add('off');
+    document.getElementById('portalView').classList.add('on');
+  }
+  function showLogin() {
+    document.getElementById('loginView').classList.remove('off');
+    document.getElementById('portalView').classList.remove('on');
+  }
+  function handleDemo(e) {
+    e.preventDefault();
+    const btn = document.getElementById('demoBtn');
+    btn.textContent = '✓ Request received — we\'ll be in touch';
+    btn.style.background = 'var(--teal)';
+    btn.style.borderColor = 'var(--teal)';
+    btn.disabled = true;
+  }
+  const obs = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('go'); }), { threshold: 0.05 });
+  document.querySelectorAll('.rv').forEach(el => obs.observe(el));
+  setTimeout(() => document.querySelectorAll('.rv').forEach(el => { if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('go'); }), 60);
+</script>
+</body>
+</html>
