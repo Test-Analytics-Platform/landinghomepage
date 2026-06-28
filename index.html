@@ -715,12 +715,13 @@ footer { border-top: 1.5px solid #000; }
     <div class="cta-right">
       <div class="cta-form-lbl">// Request a demo</div>
       <form class="cta-form" onsubmit="handleDemo(event)">
-        <input class="cta-field" type="text" placeholder="Institute name" required>
-        <input class="cta-field" type="email" placeholder="Email address" required>
-        <input class="cta-field" type="text" placeholder="City / State">
-        <input class="cta-field" type="tel" placeholder="Mobile number">
+        <input class="cta-field" type="text" id="demoInstitute" placeholder="Institute name" required>
+        <input class="cta-field" type="email" id="demoEmail" placeholder="Email address" required>
+        <input class="cta-field" type="text" id="demoCityState" placeholder="City / State">
+        <input class="cta-field" type="tel" id="demoPhone" placeholder="Mobile number">
         <button type="submit" class="cta-submit" id="demoBtn">Submit Request →</button>
       </form>
+      <div class="mfooter" id="demoError" style="display:none;color:var(--crit-bg);margin-top:0.75rem;"></div>
     </div>
   </div>
 </div>
@@ -800,13 +801,41 @@ footer { border-top: 1.5px solid #000; }
     document.getElementById('loginView').classList.remove('off');
     document.getElementById('portalView').classList.remove('on');
   }
-  function handleDemo(e) {
+  const DEMO_REQUESTS_URL = 'https://ta-mvp-backend-328880728804.us-central1.run.app/demo-requests';
+
+  async function handleDemo(e) {
     e.preventDefault();
     const btn = document.getElementById('demoBtn');
-    btn.textContent = '✓ Request received — we\'ll be in touch';
-    btn.style.background = 'var(--teal)';
-    btn.style.borderColor = 'var(--teal)';
+    const errEl = document.getElementById('demoError');
+    errEl.style.display = 'none';
+
+    const payload = {
+      institute_name: document.getElementById('demoInstitute').value.trim(),
+      email: document.getElementById('demoEmail').value.trim(),
+      city_state: document.getElementById('demoCityState').value.trim() || null,
+      phone: document.getElementById('demoPhone').value.trim() || null,
+    };
+
     btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    try {
+      const res = await fetch(DEMO_REQUESTS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error('Request failed');
+
+      btn.textContent = '✓ Request received — we\'ll be in touch';
+      btn.style.background = 'var(--teal)';
+      btn.style.borderColor = 'var(--teal)';
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Submit Request →';
+      errEl.textContent = 'Something went wrong — please try again or email support@anklytics.in directly.';
+      errEl.style.display = 'block';
+    }
   }
   const obs = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('go'); }), { threshold: 0.05 });
   document.querySelectorAll('.rv').forEach(el => obs.observe(el));
